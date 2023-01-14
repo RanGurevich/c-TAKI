@@ -1,2 +1,5 @@
 ﻿  207685504-project.c
+C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(32,8): warning C4244: 'function': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(29,8): warning C4133: 'initializing': incompatible types - from 'char [1]' to 'USER *'
+C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(30,6): warning C4101: 'numberOfPlayers': unreferenced local variable
   taki.vcxproj -> C:\Users\ran70\Desktop\degree\c-TAKI\taki\x64\Debug\taki.exe
