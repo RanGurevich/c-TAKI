@@ -1,3 +1,7 @@
 ﻿  207685504-project.c
-C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(61,8): warning C4244: 'function': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(65,8): warning C4244: 'function': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(68,40): warning C4020: 'gameRun': too many actual parameters
+C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(78,36): warning C4101: 'numberToPlayerToSet': unreferenced local variable
+C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(99,74): warning C4029: declared formal parameter list different from definition
+C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(135,66): warning C4047: '>': 'int' differs in levels of indirection from 'CARD *'
   taki.vcxproj -> C:\Users\ran70\Desktop\degree\c-TAKI\taki\x64\Debug\taki.exe
