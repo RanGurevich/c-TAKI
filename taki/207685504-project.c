@@ -84,6 +84,11 @@ void *setUsers(int *numberOfPlayers) {
 	printf("Please enter the number of players:");
 	scanf("%d", numberOfPlayers);
 	usersInGame = malloc(sizeof(USER) * *numberOfPlayers);
+	if (usersInGame == NULL)
+	{
+		printf("Oh No! :( ERROR: usersInGame throw exception: memory allocation error");
+		exit(1);
+	}
 	for (userScanIndex = 0; userScanIndex < *numberOfPlayers; userScanIndex++)
 	{
 		printf("Please enter the first name of player #%d:\n", userScanIndex + 1);
@@ -91,6 +96,10 @@ void *setUsers(int *numberOfPlayers) {
 		usersInGame[userScanIndex].sizeOfMaxUserCards = CARDS_GIVEN_FIRST_TIME;
 		usersInGame[userScanIndex].currentUserCards = CARDS_GIVEN_FIRST_TIME;
 		usersInGame[userScanIndex].userCards = malloc(sizeof(CARD) * CARDS_GIVEN_FIRST_TIME);
+		if (usersInGame[userScanIndex].userCards == NULL) {
+			printf("Oh No! :( ERROR: usersInGame[userScanIndex].userCards throw exception: memory allocation error");
+			exit(1);
+		}
 		for (cardScanIndex = 0; cardScanIndex < CARDS_GIVEN_FIRST_TIME; cardScanIndex++)
 		{
 			usersInGame[userScanIndex].userCards[cardScanIndex] = getRandomCard();
@@ -105,13 +114,13 @@ void gameRun(USER usersPlaying[], int numberOfPlayers, CARD *cardOnStack) {
 	int direction = DIRECRTION_RIGHT;
 	while (!someoneWon)
 	{
-
 		printf("Upper card:\n");
 		printCard(*cardOnStack);
 		gameTurn(&usersPlaying[playingNowIndex], &direction, cardOnStack);
 		if(usersPlaying[playingNowIndex].currentUserCards == 0) {
 			printf("AND THE WINNER IS...\n %s!!!!!!~~",usersPlaying[playingNowIndex].userName);
 			someoneWon = true;
+			return;
 		}
 		playingNowIndex += direction;
 		if(playingNowIndex >= numberOfPlayers || playingNowIndex < 0) {
@@ -122,6 +131,10 @@ void gameRun(USER usersPlaying[], int numberOfPlayers, CARD *cardOnStack) {
 }
 void gameTurn(USER *userPlaying, int* direction, CARD* cardOnStack) {
 	int userCardChoice;
+
+	if (*direction > DIRECRTION_RIGHT || *direction < DIRECTION_LEFT) {
+		*direction = *direction > 0 ? DIRECRTION_RIGHT : DIRECTION_LEFT;
+	}
 	printf("%s' turn!\n", userPlaying->userName);
 	printUserCard(userPlaying);
 	printf("Please enter 0 if you want to take a card from the deck\n");
@@ -151,14 +164,41 @@ void putCardInGame(USER* userPlaying, int* direction, CARD* cardOnStack) {
 			systemSaveCard = userPlaying->userCards[userCardChoice - 1];
 			removeCardFromUserAndSetDeck(userPlaying, userCardChoice - 1, cardOnStack);
 			if (systemSaveCard.cardType == PLUS_CARD_INDEX) {
-				printf("+-+-+-+PLUS PLUS PLUS!!! %s USES THE PLUS CARD!!! PUT ANOTHER CARD!+-+-+-+", userPlaying->userName);
+				printf("+-+-+-+PLUS PLUS PLUS!!! %s USES THE PLUS CARD!!! PUT ANOTHER CARD!+-+-+-+\n", userPlaying->userName);
 				*cardOnStack = systemSaveCard;
 				printUserCard(userPlaying);
 				putCardInGame(userPlaying, direction, cardOnStack);
 			}
+			if (systemSaveCard.cardType == STOP_CARD_INDEX) {
+				printf("+-+-+-+STOP RIGHT NOW!!! %s USES THE PLUS CARD!!! The next player turn skipped+-+-+-+\n", userPlaying->userName);
+				*direction *= 2;
+			}
 			if (systemSaveCard.cardType == CHANGE_DIRECTION_CARD_INDEX) {
+				printf("+-+-+-+FIFO CHANGED TO LIFO! DIRECTION CHANGED+-+-+-+\n", userPlaying->userName);
+
 				*direction *= -1;
 			}
+			if (systemSaveCard.cardType == TAKI_CARD_INDEX) {
+				removeCardFromUserAndSetDeck(userPlaying, userCardChoice - 1, cardOnStack);
+				while (userCardChoice !=0)
+				{
+					printCard(*cardOnStack);
+					printUserCard(userPlaying);
+					printf("THE GREAT TAKI DOOR IS NOW OPEN! PUT ANY CARD FROM THE SAME COLOR AND TYPE 0 AFTER YOU FINISH!\n");
+					scanf("%d", &userCardChoice);
+					if (userCardChoice != 0) {
+						if (userPlaying->userCards[userCardChoice - 1].cardColor == cardOnStack->cardColor) {
+							removeCardFromUserAndSetDeck(userPlaying, userCardChoice - 1, cardOnStack);
+						}
+						else
+						{
+							printf("BAD CARD NUMBER RECIVED! PLEASE TRY AGAIN!\n");
+						}
+					}
+
+				}
+			}
+
 		}
 		else
 		{
@@ -202,8 +242,8 @@ void takeCardFromDeck(USER* userplaying) {
 		userplaying->sizeOfMaxUserCards *= 2;
 		userplaying->userCards = realloc(userplaying->userCards, userplaying->sizeOfMaxUserCards *= 2);
 		if (userplaying->userCards == NULL) {
-			printf("MEMORY ERROR!");
-			return;
+			printf("Oh No! :( ERROR: userplaying->userCards throw exception: memory allocation error");
+			exit(1);
 		}
 	}
 	userplaying->currentUserCards += 1;
