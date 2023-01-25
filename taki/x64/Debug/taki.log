@@ -1,12 +1,16 @@
 ﻿  207685504-project.c
-C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(68,8): warning C4244: 'function': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(71,40): warning C4020: 'gameRun': too many actual parameters
-C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(81,36): warning C4101: 'numberToPlayerToSet': unreferenced local variable
-C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(111,75): warning C4029: declared formal parameter list different from definition
-C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(119,56): warning C4020: 'gameTurn': too many actual parameters
-C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(132,69): warning C4029: declared formal parameter list different from definition
-C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(133,6): warning C4101: 'userCardChoice': unreferenced local variable
-C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(177,82): warning C4474: 'printf' : too many arguments passed for format string
-C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(177,82): message : placeholders and their parameters expect 0 variadic arguments, but 1 were provided
-C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(241,66): warning C4047: '>': 'int' differs in levels of indirection from 'CARD *'
+C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(85,8): warning C4244: 'function': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(90,50): warning C4133: 'function': incompatible types - from 'CARD *' to 'int *'
+C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(90,52): warning C4020: 'gameRun': too many actual parameters
+C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(136,36): warning C4101: 'numberToPlayerToSet': unreferenced local variable
+C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(166,62): warning C4028: formal parameter 3 different from declaration
+C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(166,95): warning C4029: declared formal parameter list different from definition
+C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(175,67): warning C4133: 'function': incompatible types - from 'CARD *' to 'int *'
+C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(175,69): warning C4020: 'gameTurn': too many actual parameters
+C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(191,56): warning C4028: formal parameter 3 different from declaration
+C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(191,89): warning C4029: declared formal parameter list different from definition
+C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(193,6): warning C4101: 'userCardChoice': unreferenced local variable
+C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(242,82): warning C4474: 'printf' : too many arguments passed for format string
+C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(242,82): message : placeholders and their parameters expect 0 variadic arguments, but 1 were provided
+C:\Users\ran70\Desktop\degree\c-TAKI\taki\207685504-project.c(310,66): warning C4047: '>': 'int' differs in levels of indirection from 'CARD *'
   taki.vcxproj -> C:\Users\ran70\Desktop\degree\c-TAKI\taki\x64\Debug\taki.exe

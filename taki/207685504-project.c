@@ -27,11 +27,13 @@
 #define CHANGE_DIRECTION_CARD_INDEX 12
 #define TAKI_CARD_INDEX 13
 #define CHANGE_COLOR_CARD_INDEX 14
+#define MAX_USER_CARDS 14
 
 #define START_POINT_OF_SPECIAL_CARDS 10
 #define DIRECRTION_RIGHT 1
 #define DIRECTION_LEFT -1
 #define TAKE_CARD_FROM_DECK 0
+#define STOP_TAKI_KEY_STROKE 0
 
 typedef struct CardStruct
 {
@@ -48,36 +50,89 @@ typedef struct UserStruct
 } USER;
 
 
-void *setUsers(int* numberOfPlayers);
+void *setUsers(int* numberOfPlayers, int cardSatistic[]);
 int getRandomNumber(int stratPoint, int endPoint);
-CARD getRandomCard();
+CARD getRandomCard(int cardSatistic[]);
 CARD changeColor();
-void setStartStackCard(CARD* startCard);
+void setStartStackCard(CARD* startCard, int cardSatistic[]);
 void printCard(CARD cardToPrint);
 void printUserCard(USER *user);
-void gameRun(USER* usersPlaying, int numberOfPlayers);
-void gameTurn(USER* userPlaying, int* direction);
-void takeCardFromDeck(USER* userplaying);
+void gameRun(USER* usersPlaying, int numberOfPlayers, int cardSatistic[]);
+void gameTurn(USER* userPlaying, int* direction, int cardSatistic[]);
+void takeCardFromDeck(USER* userplaying, int cardSatistic[]);
 void removeCardFromUserAndSetDeck(USER* user, int indexToRemove, CARD* cardOnStack);
-void putCardInGame(USER* userPlaying, int* direction, CARD* cardOnStack);
+void putCardInGame(USER* userPlaying, int* direction, CARD* cardOnStackint, int cardSatistic[]);
+void initCardStatic(int cardSatistic[]);
+void printSatistic(int cardSatistic[]);
+/*
+* +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+* THE TAKI GAME!!!!###@@~~~~
+* FINAL COURSE PPROJECT
+* 
+* Student name: Ran Gurevich
+* ID: 207685504
+*
+* 
+* * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
 
+*/
 void main() {
+	// the program play the taki game
 	USER* usersInGame;
+	int cardSatistic[MAX_USER_CARDS];
 	int numberOfPlayers;
 	CARD stackCard;
 	srand(time(NULL));
-	setStartStackCard(&stackCard);
-	usersInGame = setUsers(&numberOfPlayers);
-	gameRun(usersInGame, numberOfPlayers, &stackCard);
+	initCardStatic(cardSatistic);
+	setStartStackCard(&stackCard, cardSatistic);
+	usersInGame = setUsers(&numberOfPlayers, cardSatistic);
+	// the game run function will manage all the game process
+	gameRun(usersInGame, numberOfPlayers, &stackCard, cardSatistic);
 }
 
 int getRandomNumber(int startPoint, int endPoint) {
+	// the function bring a random number
 	return startPoint + rand() % (endPoint - startPoint);
 }
 
+void initCardStatic(int cardSatistic[]) {
+	// The function init the card satistic array
+	int i;
+	for (i = 0; i < MAX_USER_CARDS; i++)
+	{
+		cardSatistic[i] = 0;
+	}
+}
 
+void printSatistic(int cardSatistic[]) {
+	// the function prints the game card satistic
+	int i;
+	printf("---------------------GAME SATISTIC---------------------\n");
+	for (i = 0; i < MAX_USER_CARDS; i++)
+	{
+		switch (i)
+		{
+		case STOP_CARD_INDEX:
+			printf("STOP: %d\n", cardSatistic[i]);
+			break;
+		case PLUS_CARD_INDEX:
+			printf("PLUS: %d\n", cardSatistic[i]);
+			break;
+		case TAKI_CARD_INDEX:
+			printf("TAKI: %d\n", cardSatistic[i]);
+			break;
+		case CHANGE_DIRECTION_CARD_INDEX:
+			printf("DIRECTION: %d\n", cardSatistic[i]);
+			break;
+		default:
+			printf("CARD NUMBER #%d: %d\n", i + 1, cardSatistic[i]);
+			break;
+		}
+	}
+}
 
-void *setUsers(int *numberOfPlayers) {
+void *setUsers(int *numberOfPlayers, int cardSatistic[]) {
+	// the function ask the user how many players are, setting their data and give each other 4 cards
 	int userScanIndex, cardScanIndex, numberToPlayerToSet;
 	USER* usersInGame;
 	printf("************  Welcome to TAKI game !!! ***********\n");
@@ -102,13 +157,14 @@ void *setUsers(int *numberOfPlayers) {
 		}
 		for (cardScanIndex = 0; cardScanIndex < CARDS_GIVEN_FIRST_TIME; cardScanIndex++)
 		{
-			usersInGame[userScanIndex].userCards[cardScanIndex] = getRandomCard();
+			usersInGame[userScanIndex].userCards[cardScanIndex] = getRandomCard(cardSatistic);
 		}
 	}
 	return usersInGame;
 }
 
-void gameRun(USER usersPlaying[], int numberOfPlayers, CARD *cardOnStack) {
+void gameRun(USER usersPlaying[], int numberOfPlayers, CARD *cardOnStack, int cardSatistic[]) {
+	// the function is managing the game process, check who is the player, checking if someone won and printing the upper card each turn
 	int playingNowIndex = 0;
 	bool someoneWon = false;
 	int direction = DIRECRTION_RIGHT;
@@ -116,77 +172,87 @@ void gameRun(USER usersPlaying[], int numberOfPlayers, CARD *cardOnStack) {
 	{
 		printf("Upper card:\n");
 		printCard(*cardOnStack);
-		gameTurn(&usersPlaying[playingNowIndex], &direction, cardOnStack);
+		gameTurn(&usersPlaying[playingNowIndex], &direction, cardOnStack, cardSatistic);
 		if(usersPlaying[playingNowIndex].currentUserCards == 0) {
-			printf("AND THE WINNER IS...\n %s!!!!!!~~",usersPlaying[playingNowIndex].userName);
+			printf("AND THE WINNER IS...\n %s!!!!!!~~\n",usersPlaying[playingNowIndex].userName);
+			printSatistic(cardSatistic);
 			someoneWon = true;
 			return;
 		}
+		// direction is setting by the speical cards
 		playingNowIndex += direction;
 		if(playingNowIndex >= numberOfPlayers || playingNowIndex < 0) {
+			//doing a circle loop
 			playingNowIndex = direction == DIRECRTION_RIGHT ? 0 : (numberOfPlayers - 1);
 		}
 
 	}
 }
-void gameTurn(USER *userPlaying, int* direction, CARD* cardOnStack) {
+void gameTurn(USER *userPlaying, int* direction, CARD* cardOnStack, int cardSatistic[]) {
+	// the function handle the game turn, printing the user cards and ask him to put a card
 	int userCardChoice;
-
 	if (*direction > DIRECRTION_RIGHT || *direction < DIRECTION_LEFT) {
+		// if the direction jump was more than one acorrding to the STOP card, setting the jump to the normal
 		*direction = *direction > 0 ? DIRECRTION_RIGHT : DIRECTION_LEFT;
 	}
 	printf("%s' turn!\n", userPlaying->userName);
 	printUserCard(userPlaying);
 	printf("Please enter 0 if you want to take a card from the deck\n");
 	printf("or 1 - %d if you want to put one of your cards in the middle : ", userPlaying->currentUserCards);
-	putCardInGame(userPlaying, direction, cardOnStack);
+	putCardInGame(userPlaying, direction, cardOnStack, cardSatistic);
 
 }
-void putCardInGame(USER* userPlaying, int* direction, CARD* cardOnStack) {
+void putCardInGame(USER* userPlaying, int* direction, CARD* cardOnStack, int cardSatistic[]) {
+	//the function let the user ut a card on the game
 	int userCardChoice;
 	CARD systemSaveCard;
 	scanf("%d", &userCardChoice);
 	switch (userCardChoice)
 	{
 	case TAKE_CARD_FROM_DECK:
-		takeCardFromDeck(userPlaying);
+		// if the user requested to take a card
+		takeCardFromDeck(userPlaying, cardSatistic);
 		break;
 	default:
-		//color
+		//color change cards
 		if (userPlaying->userCards[userCardChoice - 1].cardType == CHANGE_COLOR_CARD_INDEX) {
 			systemSaveCard = changeColor();
 			removeCardFromUserAndSetDeck(userPlaying, userCardChoice - 1, cardOnStack);
 			*cardOnStack = systemSaveCard;
 		} 
 		else
-		//normal card
+		//other cards, cheking if the user has the option to use the card he eantted
 		if (userPlaying->userCards[userCardChoice - 1].cardColor == cardOnStack->cardColor || userPlaying->userCards[userCardChoice - 1].cardType == cardOnStack->cardType) {
 			systemSaveCard = userPlaying->userCards[userCardChoice - 1];
 			removeCardFromUserAndSetDeck(userPlaying, userCardChoice - 1, cardOnStack);
 			if (systemSaveCard.cardType == PLUS_CARD_INDEX) {
+				// the PLUS card, giving the user another turn
 				printf("+-+-+-+PLUS PLUS PLUS!!! %s USES THE PLUS CARD!!! PUT ANOTHER CARD!+-+-+-+\n", userPlaying->userName);
 				*cardOnStack = systemSaveCard;
 				printUserCard(userPlaying);
-				putCardInGame(userPlaying, direction, cardOnStack);
+				putCardInGame(userPlaying, direction, cardOnStack, cardSatistic);
 			}
 			if (systemSaveCard.cardType == STOP_CARD_INDEX) {
+				// the stop card, skipping the next user turn by doubling the direction jump
 				printf("+-+-+-+STOP RIGHT NOW!!! %s USES THE PLUS CARD!!! The next player turn skipped+-+-+-+\n", userPlaying->userName);
 				*direction *= 2;
 			}
 			if (systemSaveCard.cardType == CHANGE_DIRECTION_CARD_INDEX) {
+				// changing the direction by multiplplying the direction by -1
 				printf("+-+-+-+FIFO CHANGED TO LIFO! DIRECTION CHANGED+-+-+-+\n", userPlaying->userName);
 
 				*direction *= -1;
 			}
 			if (systemSaveCard.cardType == TAKI_CARD_INDEX) {
+				// the TAKI card, let the user play any card witth the same color till he press 0
 				removeCardFromUserAndSetDeck(userPlaying, userCardChoice - 1, cardOnStack);
-				while (userCardChoice !=0)
+				while (userCardChoice != STOP_TAKI_KEY_STROKE)
 				{
 					printCard(*cardOnStack);
 					printUserCard(userPlaying);
-					printf("THE GREAT TAKI DOOR IS NOW OPEN! PUT ANY CARD FROM THE SAME COLOR AND TYPE 0 AFTER YOU FINISH!\n");
+					printf("THE GREAT TAKI DOOR IS NOW OPEN! PUT ANY CARD FROM THE SAME COLOR AND TYPE %d AFTER YOU FINISH!\n", STOP_TAKI_KEY_STROKE);
 					scanf("%d", &userCardChoice);
-					if (userCardChoice != 0) {
+					if (userCardChoice != STOP_TAKI_KEY_STROKE) {
 						if (userPlaying->userCards[userCardChoice - 1].cardColor == cardOnStack->cardColor) {
 							removeCardFromUserAndSetDeck(userPlaying, userCardChoice - 1, cardOnStack);
 						}
@@ -202,16 +268,18 @@ void putCardInGame(USER* userPlaying, int* direction, CARD* cardOnStack) {
 		}
 		else
 		{
+			// if unvalid card recived telling the user to ttry again
 			printf("Invaid Card! please try again!\n");
 			printf("Please enter 0 if you want to take a card from the deck\n");
 			printf("or 1 - %d if you want to put one of your cards in the middle : ", userPlaying->currentUserCards);
-			putCardInGame(userPlaying, direction, cardOnStack);
+			putCardInGame(userPlaying, direction, cardOnStack, cardSatistic);
 		}
 		break;
 	}
 }
 
 CARD changeColor() {
+	// the function let the user to change color
 	int userChoice;
 	CARD newColorCard;
 	newColorCard.cardType = CHANGE_COLOR_CARD_INDEX;
@@ -237,7 +305,8 @@ CARD changeColor() {
 		break;
 	}
 }
-void takeCardFromDeck(USER* userplaying) {
+void takeCardFromDeck(USER* userplaying, int cardSatistic[]) {
+	// the function add the user a random card to his hand
 	if (userplaying->sizeOfMaxUserCards > userplaying->userCards + 1) {
 		userplaying->sizeOfMaxUserCards *= 2;
 		userplaying->userCards = realloc(userplaying->userCards, userplaying->sizeOfMaxUserCards *= 2);
@@ -247,9 +316,11 @@ void takeCardFromDeck(USER* userplaying) {
 		}
 	}
 	userplaying->currentUserCards += 1;
-	userplaying->userCards[userplaying->currentUserCards - 1] = getRandomCard();
+	userplaying->userCards[userplaying->currentUserCards - 1] = getRandomCard(cardSatistic);
 }
+
 void printUserCard(USER *user) {
+	// the function pring a card
 	int i;
 	for ( i = 0; i < user->currentUserCards; i++)
 	{
@@ -257,14 +328,18 @@ void printUserCard(USER *user) {
 		printCard(user->userCards[i]);
 	}
 }
-void setStartStackCard(CARD *startCard) {
-	*startCard = getRandomCard();
+
+void setStartStackCard(CARD *startCard, int cardSatistic[]) {
+	// the function settting a first card on the stack, if the card was with spiecal type, recreating it
+	*startCard = getRandomCard(cardSatistic);
 	while (startCard->cardType >= START_POINT_OF_SPECIAL_CARDS)
 	{
-		*startCard = getRandomCard();
+		*startCard = getRandomCard(cardSatistic);
 	}
 }
+
 void printCard(CARD cardToPrint) {
+	// the function print the card
 	printf("*********\n");
 	printf("*       *\n");
 	switch (cardToPrint.cardType)
@@ -296,6 +371,7 @@ void printCard(CARD cardToPrint) {
 }
 
 void removeCardFromUserAndSetDeck(USER* user, int indexToRemove, CARD* cardOnStack) {
+	// the function get a hannd and index of a card and removing it and keeping the card index as the same
 	int i;
 	cardOnStack->cardColor = user->userCards[indexToRemove].cardColor;
 	cardOnStack->cardType = user->userCards[indexToRemove].cardType;
@@ -305,11 +381,14 @@ void removeCardFromUserAndSetDeck(USER* user, int indexToRemove, CARD* cardOnSta
 	}
 	user->currentUserCards--;
 }
-CARD getRandomCard() {
+
+CARD getRandomCard(int cardSatistic[]) {
+	// the function get a random card and adding his creation to the satistic
 	CARD cardToSet;
 	int typeOfCard = getRandomNumber(1, MAX_POSSIBLE_CARDS_TYPES);
 	int color = getRandomNumber(0, NUMBER_OF_COLORS);
 	cardToSet.cardType = typeOfCard;
+	cardSatistic[cardToSet.cardType - 1] += 1 ;
 	if (cardToSet.cardType == CHANGE_COLOR_CARD_INDEX)
 	{
 		cardToSet.cardColor = NO_COLOR_CHAR;
